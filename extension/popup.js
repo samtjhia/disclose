@@ -33,6 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (score >= 0.5) return "yellow";
     return "red";
   }
+  
+  function getClaimColor(verdict) {
+  if (!verdict) return "yellow";
+  const v = verdict.toLowerCase();
+  if (v.includes("true") || v.includes("correct")) return "green";
+  if (v.includes("false") || v.includes("incorrect")) return "red";
+  return "yellow";
+}
+
 
   // Main button click
   mainAction.addEventListener("click", async () => {
@@ -66,12 +75,63 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // === CLAIM CHECKER MODE (just placeholder for now) ===
         if (currentMode === "claim") {
-          if (response?.message) {
-            alert(response.message);
-          } else {
-            alert(response?.error || "Something went wrong.");
+          const selectedText = response?.selection;
+
+          if (!selectedText) {
+            alert("No text selected.");
+            return;
           }
+
+          fetch("http://127.0.0.1:5000/check-claim", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ claim: selectedText })
+          })
+            .then(res => res.json())
+            .then((data) => {
+              const resultCard = document.createElement("div");
+              resultCard.className = `card ${getClaimColor(data.verdict)}`;
+              resultCard.style = `
+                width: 90%;
+                margin: 16px auto;
+                padding: 16px;
+                border-radius: 12px;
+                background-color: #f9f9f9;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                font-family: sans-serif;
+                border-left: 6px solid ${
+                  data.verdict === "False" ? "#e74c3c" :
+                  data.verdict === "True" ? "#2ecc71" :
+                  "#f1c40f"
+                };
+              `;
+
+              resultCard.innerHTML = `
+                <h3 style="margin-top: 0; font-size: 18px; color: #333;">Claim Verdict</h3>
+                <p style="font-size: 24px; font-weight: bold; color: #555;">${data.verdict}</p>
+                <p style="margin: 8px 0 0; font-size: 14px; color: #777;">
+                  ${data.claim || "No additional context available."}
+                </p>
+                ${
+                  data.url
+                    ? `<p style="margin-top: 8px;"><a href="${data.url}" target="_blank" style="font-size: 14px; color: #3498db;">Source</a></p>`
+                    : ""
+                }
+              `;
+
+              resultsContainer.innerHTML = ""; // Clear any old result
+              resultsContainer.appendChild(resultCard);
+            })
+            .catch(err => {
+              const errCard = document.createElement("div");
+              errCard.className = "card red";
+              errCard.innerHTML = `<h3>Error</h3><p>Could not check claim.</p>`;
+              resultsContainer.innerHTML = "";
+              resultsContainer.appendChild(errCard);
+              console.error(err);
+            });
         }
+
 
         // === ARTICLE ANALYZER MODE ===
         else if (currentMode === "article" && response?.biasResult) {

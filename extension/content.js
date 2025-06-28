@@ -7,7 +7,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     // Placeholder for claim checker
-    sendResponse({ message: `Claim check will be added soon for: "${selection}"` });
+    sendResponse({ selection });
     return true;
   }
 

@@ -4,6 +4,11 @@ from transformers import pipeline
 from urllib.parse import urlparse
 from rapidfuzz import process
 import pandas as pd
+import os
+import requests
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = Flask(__name__)
 CORS(app)
@@ -89,6 +94,36 @@ def get_bias():
         'domain': urlparse(url).netloc,
         'bias': bias
     })
+
+GOOGLE_FACTCHECK_API_KEY = os.getenv("FACTCHECK_API_KEY")
+@app.route('/check-claim', methods=['POST'])
+def check_claim():
+    data = request.get_json()
+    claim_text = data.get("claim", "")
+
+    # Make request to Google Fact Check API
+    response = requests.get("https://factchecktools.googleapis.com/v1alpha1/claims:search", params={
+        "query": claim_text,
+        "key": GOOGLE_FACTCHECK_API_KEY,
+        "languageCode": "en"
+    })
+
+    json_data = response.json()
+    claims = json_data.get("claims", [])
+
+    if not claims:
+        return jsonify({"verdict": "Unverified", "claim": "", "url": ""})
+
+    # Grab first result
+    first_claim = claims[0]
+    claim_review = first_claim.get("claimReview", [{}])[0]
+
+    return jsonify({
+        "verdict": claim_review.get("textualRating", "Unknown"),
+        "claim": claim_review.get("title", claim_text),
+        "url": claim_review.get("url", "")
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
