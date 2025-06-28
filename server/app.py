@@ -8,10 +8,8 @@ app = Flask(__name__)
 
 print("🔧 Device set to use cpu")
 
-# 🎯 Load tone analysis pipeline
 tone_classifier = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
 
-# 📥 Load domain bias CSV
 def load_all_sides(file_path):
     df = pd.read_csv(file_path)
     # Build lookup: { "foxnews": "Right", "cnn": "Left", ... }
@@ -22,7 +20,6 @@ def load_all_sides(file_path):
         if pd.notna(row['news_source']) and pd.notna(row['rating_num'])
     }
 
-# 🧠 Convert numeric ratings (1–5) to labels
 def convert_rating(num):
     try:
         num = int(num)
@@ -36,11 +33,9 @@ def convert_rating(num):
     except:
         return "Unknown"
 
-# 🗂️ Load CSV data into dictionary
 domain_bias = load_all_sides("allsides_data.csv")
 print(f"🔎 Loaded domain_bias keys: {list(domain_bias.keys())[:20]}...")
 
-# 🔍 Smart domain-to-source matching
 def get_domain_bias(url):
     parsed = urlparse(url)
     domain = parsed.netloc.lower().replace("www.", "")
@@ -52,7 +47,6 @@ def get_domain_bias(url):
     
     return "Unknown"
 
-# 🧪 Endpoint: Tone Analysis
 @app.route('/analyze-tone', methods=['POST'])
 def analyze_tone():
     data = request.get_json()
@@ -79,7 +73,6 @@ def analyze_tone():
         'confidence': round(score, 4)
     })
 
-# 🧪 Endpoint: Domain Bias Lookup
 @app.route('/get-bias', methods=['POST'])
 def get_bias():
     data = request.get_json()
