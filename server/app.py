@@ -62,13 +62,13 @@ def analyze_tone():
     score = result['score']
 
     if score < 0.5:
-        tone = "NEUTRAL"
+        tone = "Neutral"
     elif "1" in label or "2" in label:
-        tone = "NEGATIVE"
+        tone = "Negative"
     elif "3" in label:
-        tone = "NEUTRAL"
+        tone = "Neutral"
     else:
-        tone = "POSITIVE"
+        tone = "Positive"
 
     return jsonify({
         'tone': tone,

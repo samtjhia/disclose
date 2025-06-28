@@ -80,13 +80,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // --- Bias Card ---
           const biasColor = {
-            "Left": "red",
-            "Lean Left": "yellow",
-            "Center": "green",
-            "Lean Right": "yellow",
-            "Right": "red",
-            "Unknown": "red"
-          }[bias.bias] || "red";
+            "Left": "bias-blue",
+            "Lean Left": "bias-lightblue",
+            "Center": "bias-neutral",
+            "Lean Right": "bias-lightred",
+            "Right": "bias-red",
+            "Unknown": "bias-unknown"
+          }[bias.bias] || "bias-unknown";
 
           const biasCard = document.createElement("div");
           biasCard.className = `card ${biasColor}`;
@@ -115,11 +115,24 @@ document.addEventListener("DOMContentLoaded", function () {
             })
               .then(res => res.json())
               .then(tone => {
+                // Card color based on tone label
+                const toneColor = {
+                  "Positive": "green",
+                  "Negative": "red",
+                  "Neutral": "yellow"
+                }[tone.tone] || "yellow";
+
+                // Confidence text color class
+                let confidenceClass = "confidence-low";
+                if (tone.confidence >= 0.75) confidenceClass = "confidence-high";
+                else if (tone.confidence >= 0.5) confidenceClass = "confidence-medium";
+
                 const toneCard = document.createElement("div");
-                toneCard.className = `card ${getColor(tone.confidence)}`;
+                toneCard.className = `card ${toneColor}`;
                 toneCard.innerHTML = `
                   <h3>Tone Analysis</h3>
-                  <p>${tone.tone} (${Math.round(tone.confidence * 100)}% confidence)</p>
+                  <p>${tone.tone}</p>
+                  <p class="${confidenceClass}">${Math.round(tone.confidence * 100)}% confidence</p>
                 `;
                 resultsContainer.appendChild(toneCard);
               })
