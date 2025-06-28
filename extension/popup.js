@@ -135,6 +135,23 @@ document.addEventListener("DOMContentLoaded", function () {
                   <p class="${confidenceClass}">${Math.round(tone.confidence * 100)}% confidence</p>
                 `;
                 resultsContainer.appendChild(toneCard);
+                
+              chrome.tabs.sendMessage(tab.id, { action: "countQuotes" }, (quoteRes) => {
+                const quoteCard = document.createElement("div");
+
+                let quoteColor = "red";
+                if (quoteRes.quoteCount >= 6) quoteColor = "green";
+                else if (quoteRes.quoteCount >= 3) quoteColor = "yellow";
+
+                quoteCard.className = `card ${quoteColor}`;
+                quoteCard.innerHTML = `
+                  <h3>Quotes</h3>
+                  <p>${quoteRes.quoteCount} direct quote${quoteRes.quoteCount !== 1 ? 's' : ''} found</p>
+                `;
+
+                resultsContainer.appendChild(quoteCard);
+              });
+
               })
               .catch(err => {
                 const errCard = document.createElement("div");
@@ -143,6 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 resultsContainer.appendChild(errCard);
               });
           });
+
         } else {
           alert(response?.error || "Unknown error.");
         }

@@ -37,4 +37,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ pageText });
     return true;
   }
+
+  if (request.action === "countQuotes") {
+    const text = document.body.innerText || "";
+
+    // Match real quotations with at least 3 words inside
+    const patterns = [
+      /"([^"]*?\b\w+\b[^"]*?\b\w+\b[^"]*?\b\w+\b[^"]*?)"/g,    // straight quotes with 3+ words
+      /“([^”]*?\b\w+\b[^”]*?\b\w+\b[^”]*?\b\w+\b[^”]*?)”/g     // curly quotes with 3+ words
+    ];
+
+    let totalQuotes = 0;
+    for (const pattern of patterns) {
+      const matches = text.match(pattern);
+      if (matches) totalQuotes += matches.length;
+    }
+
+    sendResponse({ quoteCount: totalQuotes });
+    return true;
+  }
+
+
+
 });
