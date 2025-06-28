@@ -82,6 +82,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ uniqueDomains: Array.from(domains), count: domains.size });
     return true;
   }
+  if (request.action === "checkAuthor") {
+    let author = "";
+
+    // Check <meta name="author" content="...">
+    const meta = document.querySelector('meta[name="author"]');
+    if (meta && meta.content) {
+      author = meta.content.trim();
+    }
+
+    // If not found, try common visible bylines
+    if (!author) {
+      const byline = document.querySelector('[class*="byline"], [class*="author"], [id*="byline"], [id*="author"]');
+      if (byline && byline.innerText.length < 100) {
+        author = byline.innerText.trim();
+      }
+    }
+
+    sendResponse({ author: author || null });
+    return true;
+  }
+
 
 
 });
