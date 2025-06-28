@@ -90,9 +90,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(res => res.json())
             .then((data) => {
               const resultCard = document.createElement("div");
-              resultCard.className = `card ${getClaimColor(data.verdict)}`;
+              resultCard.className = `card claim-wide ${getClaimColor(data.verdict)}`;
               resultCard.style = `
-                width: 90%;
                 margin: 16px auto;
                 padding: 16px;
                 border-radius: 12px;

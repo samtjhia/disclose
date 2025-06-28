@@ -95,3 +95,9 @@ body {
     flex-direction: column;
     justify-content: space-between;
     }
+
+    .claim-card {
+    max-width: unset;
+    width: 90%;
+    margin: 16px auto;
+    }
