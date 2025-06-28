@@ -57,6 +57,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
+  if (request.action === "getSourceDiversity") {
+    // try to limit to actual article content
+    const article = document.querySelector("article") || document.body;
+
+    const anchors = Array.from(article.querySelectorAll("a[href]"));
+    const pageDomain = window.location.hostname.replace(/^www\./, "").toLowerCase();
+    const domains = new Set();
+
+    anchors.forEach(anchor => {
+      try {
+        const url = new URL(anchor.href);
+        const hostname = url.hostname.replace(/^www\./, "").toLowerCase();
+
+        // only count external domains
+        if (hostname !== pageDomain) {
+          domains.add(hostname);
+        }
+      } catch (e) {
+        // ignore bad URLs
+      }
+    });
+
+    sendResponse({ uniqueDomains: Array.from(domains), count: domains.size });
+    return true;
+  }
 
 
 });

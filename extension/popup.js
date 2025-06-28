@@ -150,6 +150,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 `;
 
                 resultsContainer.appendChild(quoteCard);
+
+              chrome.tabs.sendMessage(tab.id, { action: "getSourceDiversity" }, (divRes) => {
+                const diversityCard = document.createElement("div");
+
+                let diversityColor = "red";
+                if (divRes.count >= 6) diversityColor = "green";
+                else if (divRes.count >= 3) diversityColor = "yellow";
+
+                diversityCard.className = `card ${diversityColor}`;
+                diversityCard.innerHTML = `
+                  <h3>Source Diversity</h3>
+                  <p>${divRes.count} unique linked domain${divRes.count !== 1 ? 's' : ''}</p>
+                `;
+
+                resultsContainer.appendChild(diversityCard);
+              });
+
               });
 
               })
