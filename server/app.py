@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from transformers import pipeline
 from urllib.parse import urlparse
 from rapidfuzz import process
 import pandas as pd
 
 app = Flask(__name__)
+CORS(app)
 
-print("🔧 Device set to use cpu")
+print("Device set to use cpu")
 
 tone_classifier = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
 
@@ -34,7 +36,7 @@ def convert_rating(num):
         return "Unknown"
 
 domain_bias = load_all_sides("allsides_data.csv")
-print(f"🔎 Loaded domain_bias keys: {list(domain_bias.keys())[:20]}...")
+print(f"Loaded domain_bias keys: {list(domain_bias.keys())[:20]}...")
 
 def get_domain_bias(url):
     parsed = urlparse(url)
