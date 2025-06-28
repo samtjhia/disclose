@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Disclose</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 12px;
+      min-width: 250px;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .mode-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .mode-toggle button {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Disclose</h1>
+
+  <div class="mode-toggle">
+    <button id="claimMode">Claim Checker</button>
+    <button id="articleMode">Article Analyzer</button>
+  </div>
+
+  <div id="action-buttons">
+    <!-- Action button will update based on mode -->
+    <button id="mainAction">Analyze Page</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
