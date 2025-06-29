@@ -11,9 +11,8 @@ It offers two modes:
 
 ---
 
-## Demo + Screenshots
-
-> *(Add demo GIFs or screenshots here)*
+## Demo
+https://github.com/user-attachments/assets/11bccf20-e8c7-44d1-8d5c-9efa12786c44
 
 ---
 
